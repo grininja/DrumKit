@@ -1,0 +1,42 @@
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-maven-plugin</artifactId>
+      <version>4.29.2</version>
+      <configuration>
+        <!-- DB connection -->
+        <url>jdbc:postgresql://localhost:5432/yourdb</url>
+        <username>postgres</username>
+        <password>postgres</password>
+        <driver>org.postgresql.Driver</driver>
+
+        <!-- JPA entities as reference -->
+        <referenceUrl>hibernate:spring:com.yourpackage.entity?dialect=org.hibernate.dialect.PostgreSQLDialect</referenceUrl>
+
+        <!-- Where to generate the changelog -->
+        <outputChangeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</outputChangeLogFile>
+      </configuration>
+
+      <executions>
+        <!-- Execution to generate changelog -->
+        <execution>
+          <id>generate-changelog</id>
+          <phase>process-resources</phase>
+          <goals>
+            <goal>generateChangeLog</goal>
+          </goals>
+        </execution>
+
+        <!-- Execution to apply changelog to DB -->
+        <execution>
+          <id>update-db</id>
+          <phase>process-resources</phase>
+          <goals>
+            <goal>update</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
