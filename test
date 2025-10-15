@@ -1,42 +1,86 @@
-<build>
-  <plugins>
-    <plugin>
-      <groupId>org.liquibase</groupId>
-      <artifactId>liquibase-maven-plugin</artifactId>
-      <version>4.29.2</version>
-      <configuration>
-        <!-- DB connection -->
-        <url>jdbc:postgresql://localhost:5432/yourdb</url>
-        <username>postgres</username>
-        <password>postgres</password>
-        <driver>org.postgresql.Driver</driver>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-        <!-- JPA entities as reference -->
-        <referenceUrl>hibernate:spring:com.yourpackage.entity?dialect=org.hibernate.dialect.PostgreSQLDialect</referenceUrl>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.example</groupId>
+    <artifactId>liquibase-demo</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
 
-        <!-- Where to generate the changelog -->
-        <outputChangeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</outputChangeLogFile>
-      </configuration>
+    <properties>
+        <java.version>17</java.version>
+        <spring.boot.version>3.5.6</spring.boot.version>
+    </properties>
 
-      <executions>
-        <!-- Execution to generate changelog -->
-        <execution>
-          <id>generate-changelog</id>
-          <phase>process-resources</phase>
-          <goals>
-            <goal>generateChangeLog</goal>
-          </goals>
-        </execution>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-        <!-- Execution to apply changelog to DB -->
-        <execution>
-          <id>update-db</id>
-          <phase>process-resources</phase>
-          <goals>
-            <goal>update</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin>
-  </plugins>
-</build>
+    <dependencies>
+
+        <!-- Spring Boot Starter for JPA -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- PostgreSQL Driver (you can change to MySQL) -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Liquibase Core -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.29.2</version>
+        </dependency>
+
+        <!-- Liquibase Hibernate 6 Extension -->
+        <dependency>
+            <groupId>org.liquibase.ext</groupId>
+            <artifactId>liquibase-hibernate6</artifactId>
+            <version>4.29.2</version>
+        </dependency>
+
+        <!-- Jakarta Validation (for Hibernate 6 compatibility) -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Spring Boot Plugin -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- Liquibase Plugin -->
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>4.29.2</version>
+                <configuration>
+                    <propertyFile>src/main/resources/liquibase.properties</propertyFile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
